@@ -1,6 +1,11 @@
 # dsh-elegent-balance-tracker
 
-DeepSeek Harness (`dsh`) 的本地计费插件：**当前会话成本** + **官方账户余额**，两个数字都按 DeepSeek 官方计价/接口展示。
+[![npm version](https://img.shields.io/npm/v/dsh-elegent-balance-tracker?style=flat-square)](https://www.npmjs.com/package/dsh-elegent-balance-tracker)
+[![license](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
+[![dsh](https://img.shields.io/badge/dsh-plugin-4176E6?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness)
+[![awesome · DSH plugin](https://awesome-dsh-plugin.com/badge.svg)](https://awesome-dsh-plugin.com)
+
+**DeepSeek Harness (`dsh`) 计费插件**：**当前会话成本** + **官方账户余额**，两个数字都按 DeepSeek 官方计价/接口展示。
 
 ## 功能
 
@@ -15,6 +20,11 @@ DeepSeek Harness (`dsh`) 的本地计费插件：**当前会话成本** + **官�
 - 累计充值 / 累计消费：官方 API 不提供（`/user/balance` 只有当前余额构成），因此不展示。
 
 ## 安装
+
+```sh
+# npm 渠道（推荐，适用于所有设备）
+dsh plugin --profile web add dsh-elegent-balance-tracker
+```
 
 ### 离线安装包
 
