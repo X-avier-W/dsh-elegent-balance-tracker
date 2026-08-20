@@ -1,0 +1,10 @@
+# dsh-elegent-balance-tracker — bundle patch layer.
+#
+# Installed into a profile (`dsh plugin --profile web add ./dsh-elegent-balance-tracker`) this
+# package joins `dsh.profile.bundles`; this patch is applied as that bundle's
+# layer. The row below loads the package's main entry as the host half (a plain
+# Cordis plugin) and, because the package declares `dsh.client`, the web app
+# also loads its `./client` bundle as the browser half.
+- insert:
+    - id: dsh-elegent-balance-tracker
+      name: dsh-elegent-balance-tracker
