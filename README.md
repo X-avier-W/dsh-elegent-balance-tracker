@@ -14,7 +14,8 @@
 | 输入框统计行下方 | **费用: x.xx元** | 当前会话累计成本。host 端逐条读取会话日志的 `usage`（未命中输入 / 缓存命中 / 输出 token），按**每条消息的发生时刻**（北京时间）选择官方**高峰/空闲**价计算，与官方账单口径一致；模型回复完毕即刷新，15s 轮询兜底 |
 | 侧边栏底部（设置按钮同行、右对齐） | **余额: x.xx元** | 启动时获取官方准确余额，之后**每分钟自动对齐**官方 `GET /user/balance`；两次对齐之间按本机所有会话**新增成本**实时扣减生成预估余额。点击立即同步；悬停显示余额与上次对齐时间 |
 
-- 计费：token 取自会话日志中 provider 上报的 `usage`（缓存命中拆分、失败重试计入），单价内置官方价格，2026-08-17 起自动按北京时间峰谷价（高峰 9-12 / 14-18 点，空闲半价）。
+- 计费：token 取自会话日志中 provider 上报的 `usage`（缓存命中拆分、失败重试计入），单价内置官方价格，2026-08-17 起自动按北京时间峰谷价（**周一至周五**高峰 9-12 / 14-18 点，**周末全天闲时**、空闲半价）。
+- **自动同步官方计价**（v0.2.0+，默认开启）：启动时及每 12 小时抓取官方定价页，自动识别新模型与峰谷规则变化——`deepseek-v4-flash-vision-exp` 等新模型无需升级插件即可按官方价计费。优先级：**用户显式配置 > 官方自动同步 > 内置默认价**。
 - 纯本机：余额只请求官方接口（API Key 不出服务器），会话日志只在本地解析，不上报任何外部服务。
 - 子代理是独立会话，各自单独统计。
 - 累计充值 / 累计消费：官方 API 不提供（`/user/balance` 只有当前余额构成），因此不展示。
@@ -52,10 +53,16 @@ dsh plugin --profile web add /absolute/path/to/dsh-elegent-balance-tracker
         baseURL: ""                   # 余额接口地址；留空用 $DEEPSEEK_BASE_URL，再回退 https://api.deepseek.com
         balanceCacheMs: 60000         # 余额缓存毫秒数
         costCacheMs: 2000             # 会话费用缓存毫秒数
-        # 单价覆盖（元 / 百万 tokens）——优先级高于内置默认价
+        # 官方计价自动同步（默认开启；关闭后仅用内置价 + 下方手动覆盖）
+        priceSync:
+          enabled: true
+          url: "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/"
+          intervalMs: 43200000        # 12 小时
+          timeoutMs: 10000
+        # 单价覆盖（元 / 百万 tokens）——优先级高于官方同步价
         prices:
           deepseek-v4-flash: { input: 1, cacheRead: 0.02, output: 2 }
-        # 日期生效的峰谷价表
+        # 日期生效的峰谷价表——优先级高于官方同步价
         priceSchedule:
           - from: "2026-08-17"
             peak:
@@ -70,8 +77,12 @@ dsh plugin --profile web add /absolute/path/to/dsh-elegent-balance-tracker
 |---|---|---|---|---|
 | `deepseek-v4-flash` | 高峰 | ¥3.0/M | ¥0.10/M | ¥9.0/M |
 | `deepseek-v4-flash` | 空闲 | ¥1.5/M | ¥0.05/M | ¥4.5/M |
+| `deepseek-v4-flash-vision-exp` | 高峰 | ¥3.0/M | ¥0.10/M | ¥9.0/M |
+| `deepseek-v4-flash-vision-exp` | 空闲 | ¥1.5/M | ¥0.05/M | ¥4.5/M |
 | `deepseek-v4-pro` | 高峰 | ¥9.0/M | ¥0.30/M | ¥27.0/M |
 | `deepseek-v4-pro` | 空闲 | ¥4.5/M | ¥0.15/M | ¥13.5/M |
+
+> 表格仅为**内置兜底价**；`priceSync` 开启时（默认）以官方页面实时同步价为准，新模型与调价自动生效。
 
 ## 卸载
 
