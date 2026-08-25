@@ -1,6 +1,6 @@
 {
   "name": "dsh-elegent-balance-tracker",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "DeepSeek Harness 计费插件：当前会话成本 + 官方余额，追加在输入框统计行下方与侧边栏设置按钮同行显示",
   "type": "module",
   "main": "lib/index.js",
